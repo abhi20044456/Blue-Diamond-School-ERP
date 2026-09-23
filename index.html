@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Diamond School ERP</title>
+<style>
+:root {
+  --blue: #1769ff; --blue-dark: #071a3a; --cyan: #19b5fe;
+  --bg: #f3f7ff; --card: #fff; --text: #17233c; --muted: #70809d;
+  --border: #e4ebf7; --success: #19a974; --danger: #ef476f;
+  --warning: #f5a623; --shadow: 0 15px 45px rgba(30,74,140,.10);
+  --input-bg: #f9fbff; --sidebar: linear-gradient(180deg,#071b40,#082b66);
+}
+[data-theme="dark"] {
+  --bg: #0a1020; --card: #121a2e; --text: #e2e8f0; --muted: #8892b0;
+  --border: #1e2a45; --shadow: 0 15px 45px rgba(0,0,0,.4);
+  --input-bg: #0f1628; --sidebar: linear-gradient(180deg,#050c18,#0a1628);
+  --blue-dark: #e2e8f0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Inter, "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: background .3s, color .3s; }
+button, input, select, textarea { font-family: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+
+/* ── LOGIN ── */
+#loginPage { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 25px; background: linear-gradient(135deg,#061634,#0c3b91 50%,#168bff); position: relative; overflow: hidden; }
+.login-card { width: min(460px,100%); background: var(--card); border-radius: 30px; padding: 42px; box-shadow: 0 35px 100px rgba(0,0,0,.3); position: relative; z-index: 2; }
+.logo-diamond { width: 78px; height: 78px; margin: auto; transform: rotate(45deg); background: linear-gradient(135deg,#0b47c9,#31b7ff); border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(23,105,255,.35); }
+.logo-diamond span { transform: rotate(-45deg); color: #fff; font-size: 35px; }
+.login-title { text-align: center; margin-top: 25px; }
+.login-title h1 { font-size: 22px; color: var(--blue-dark); }
+.login-title p { color: var(--muted); margin-top: 7px; font-size: 13px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.form-control { width: 100%; border: 1px solid var(--border); background: var(--input-bg); border-radius: 12px; padding: 12px 14px; outline: none; color: var(--text); font-size: 13px; transition: border .2s, box-shadow .2s; }
+.form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(23,105,255,.09); }
+.login-btn { width: 100%; border: 0; border-radius: 13px; padding: 14px; background: linear-gradient(135deg,#1255db,#13a7ff); color: #fff; font-weight: 800; font-size: 15px; box-shadow: 0 12px 25px rgba(23,105,255,.25); transition: .25s; }
+.login-btn:hover { transform: translateY(-2px); }
+.login-link { text-align: center; margin-top: 15px; font-size: 12px; }
+.login-link a { color: var(--blue); cursor: pointer; text-decoration: underline; }
+.login-hint { text-align: center; color: var(--muted); font-size: 11px; margin-top: 18px; }
+
+/* ── APP ── */
+#app { display: none; min-height: 100vh; }
+.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 255px; background: var(--sidebar); color: #fff; z-index: 20; padding: 22px 15px; overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 12px; padding: 8px 10px 24px; }
+.brand-icon { width: 43px; height: 43px; background: linear-gradient(135deg,#2ebcff,#1254df); transform: rotate(45deg); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.brand-icon span { transform: rotate(-45deg); font-size: 20px; }
+.brand-text h2 { font-size: 14px; }
+.brand-text p { font-size: 9px; opacity: .65; letter-spacing: 1px; }
+.menu-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; opacity: .5; margin: 14px 12px 8px; }
+.nav-btn { width: 100%; border: 0; background: transparent; color: #b9c9e7; padding: 11px 12px; border-radius: 12px; text-align: left; display: flex; align-items: center; gap: 11px; margin-bottom: 3px; font-size: 13px; transition: .2s; }
+.nav-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+.nav-btn.active { background: linear-gradient(90deg,rgba(32,143,255,.35),rgba(32,143,255,.12)); color: #fff; box-shadow: inset 3px 0 var(--cyan); }
+.nav-icon { width: 22px; text-align: center; font-size: 15px; }
+.nav-badge { margin-left: auto; background: var(--danger); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; }
+
+.main { margin-left: 255px; min-height: 100vh; }
+.topbar { height: 75px; background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 10; transition: background .3s; }
+.page-title h1 { font-size: 19px; }
+.page-title p { color: var(--muted); font-size: 11px; margin-top: 3px; }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.user-pill { display: flex; align-items: center; gap: 9px; background: var(--input-bg); padding: 7px 12px; border-radius: 30px; font-size: 11px; font-weight: 700; }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.content { padding: 24px; }
+
+/* ── CARDS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 20px; }
+.stats-grid.small { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); position: relative; overflow: hidden; transition: .25s; }
+.stat-card:hover { transform: translateY(-3px); }
+.stat-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
+.stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--input-bg); color: var(--blue); font-size: 17px; }
+.stat-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+.stat-value { font-size: 22px; font-weight: 850; margin-top: 9px; position: relative; z-index: 2; }
+.stat-sub { font-size: 10px; color: var(--muted); margin-top: 4px; position: relative; z-index: 2; }
+
+.grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; margin-bottom: 18px; }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 18px; transition: background .3s; }
+.panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.panel-header h3 { font-size: 14px; }
+.panel-header p { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.panel-body { padding: 18px; }
+
+/* ── PAGE ── */
+.page { display: none; animation: pageIn .3s ease; }
+.page.active { display: block; }
+.page-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; flex-wrap: wrap; }
+.page-heading h2 { font-size: 20px; }
+.page-heading p { color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+.btn { border: 0; border-radius: 10px; padding: 9px 14px; font-size: 12px; font-weight: 700; transition: .2s; white-space: nowrap; }
+.btn-primary { background: var(--blue); color: #fff; box-shadow: 0 8px 20px rgba(23,105,255,.2); }
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary { background: var(--input-bg); color: var(--blue); border: 1px solid var(--border); }
+.btn-danger { background: #fff0f3; color: #d62f55; }
+.btn-success { background: #eafaf4; color: #12835a; }
+.btn-warning { background: #fff7e6; color: #a06d00; }
+.btn-sm { padding: 6px 10px; font-size: 11px; }
+[data-theme="dark"] .btn-danger { background: #3a1a24; color: #ff6b8a; }
+[data-theme="dark"] .btn-success { background: #0f2e24; color: #4ade80; }
+[data-theme="dark"] .btn-warning { background: #3a2e10; color: #fbbf24; }
+
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+.toolbar .form-control { max-width: 200px; }
+.search-box { flex: 1; min-width: 220px; max-width: none !important; }
+
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 640px; }
+th { background: var(--input-bg); color: var(--muted); text-align: left; padding: 11px 13px; font-size: 10px; text-transform: uppercase; letter-spacing: .4px; font-weight: 800; white-space: nowrap; }
+td { padding: 11px 13px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
+tr:hover td { background: var(--input-bg); }
+
+.badge { display: inline-flex; padding: 4px 9px; border-radius: 30px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.badge-green { background: #e8faf3; color: #13845a; }
+.badge-red { background: #fff0f3; color: #d52e54; }
+.badge-blue { background: #eaf2ff; color: #1658c9; }
+.badge-yellow { background: #fff8df; color: #9c7100; }
+.badge-gray { background: #f0f3f8; color: #6b7a91; }
+[data-theme="dark"] .badge-green { background: #0f2e24; color: #4ade80; }
+[data-theme="dark"] .badge-red { background: #3a1a24; color: #ff6b8a; }
+[data-theme="dark"] .badge-blue { background: #1a2a4a; color: #60a5fa; }
+[data-theme="dark"] .badge-yellow { background: #3a2e10; color: #fbbf24; }
+
+/* ── LEDGER ── */
+.ledger-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12px; gap: 10px; flex-wrap: wrap; }
+.ledger-row:last-child { border-bottom: 0; }
+.ledger-row.paid { background: rgba(25,169,116,.05); }
+.ledger-row.overdue { background: rgba(239,71,111,.05); }
+.ledger-row.due { background: rgba(245,166,35,.05); }
+.ledger-left { display: flex; flex-direction: column; gap: 2px; }
+.ledger-left strong { font-size: 13px; }
+.ledger-left small { color: var(--muted); font-size: 10px; }
+
+/* ── MODAL ── */
+.modal { position: fixed; inset: 0; background: rgba(3,15,35,.6); backdrop-filter: blur(6px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 18px; }
+.modal.show { display: flex; }
+.modal-card { background: var(--card); width: min(760px,100%); max-height: 92vh; overflow: auto; border-radius: 20px; box-shadow: 0 30px 100px rgba(0,0,0,.25); }
+.modal-card.wide { width: min(1050px,100%); }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); z-index: 5; }
+.modal-header h3 { font-size: 15px; }
+.close-btn { border: 0; background: var(--input-bg); width: 32px; height: 32px; border-radius: 50%; font-size: 17px; color: var(--text); }
+.modal-body { padding: 20px; }
+
+/* ── TOAST ── */
+#toastContainer { position: fixed; right: 20px; bottom: 20px; z-index: 999; display: flex; flex-direction: column; gap: 9px; }
+.toast { background: #10203d; color: #fff; padding: 12px 16px; border-radius: 11px; box-shadow: 0 15px 35px rgba(0,0,0,.2); font-size: 12px; animation: toastIn .3s ease; max-width: 340px; }
+.toast.success { border-left: 4px solid #1fd18a; }
+.toast.error { border-left: 4px solid #ff5479; }
+.toast.warning { border-left: 4px solid #f5a623; }
+
+/* ── RECEIPT ── */
+.receipt { width: 100%; max-width: 700px; margin: auto; border: 1px solid var(--border); border-radius: 10px; padding: 32px; background: var(--card); }
+.receipt-head { text-align: center; border-bottom: 2px solid var(--blue); padding-bottom: 18px; }
+.receipt-head h1 { font-size: 21px; color: var(--blue); }
+.receipt-head p { color: var(--muted); font-size: 12px; margin-top: 5px; }
+.receipt-title { text-align: center; margin: 18px 0; font-weight: 900; letter-spacing: 2px; }
+.receipt-info { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; font-size: 12px; margin-bottom: 18px; }
+.receipt-total { text-align: right; font-size: 18px; font-weight: 900; margin-top: 14px; }
+.receipt-footer { text-align: center; color: var(--muted); font-size: 11px; margin-top: 26px; }
+
+/* ── THEME TOGGLE ── */
+.theme-toggle { background: var(--input-bg); border: 1px solid var(--border); border-radius: 30px; padding: 6px 12px; font-size: 16px; cursor: pointer; transition: .2s; }
+.theme-toggle:hover { transform: scale(1.05); }
+
+/* ── RESPONSIVE ── */
+.mobile-menu { display: none; border: 0; background: var(--input-bg); width: 38px; height: 38px; border-radius: 10px; font-size: 17px; color: var(--text); }
+@media(max-width:1100px) { .stats-grid { grid-template-columns: repeat(2,1fr); } .grid-2 { grid-template-columns: 1fr; } .form-grid { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:800px) {
+  .sidebar { transform: translateX(-100%); transition: .25s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .mobile-menu { display: block; }
+  .topbar { padding: 0 14px; }
+  .content { padding: 14px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .form-grid, .form-grid-2 { grid-template-columns: 1fr; }
+  .user-pill span { display: none; }
+}
+@keyframes pageIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+@keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+.form-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+.form-grid-2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.form-title { font-size: 13px; font-weight: 800; margin: 4px 0 14px; color: var(--text); }
+textarea.form-control { min-height: 80px; resize: vertical; }
+.actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<section id="loginPage">
+  <div class="login-card">
+    <div class="logo-diamond"><span>◆</span></div>
+    <div class="login-title">
+      <h1>Blue Diamond Public School</h1>
+      <p>School Management ERP</p>
+    </div>
+    <form id="loginForm" style="margin-top:28px">
+      <div class="form-group"><label>Username</label>
+        <input class="form-control" id="loginUsername" value="admin" required></div>
+      <div class="form-group"><label>Password</label>
+        <input class="form-control" id="loginPassword" type="password" required></div>
+      <button class="login-btn" type="submit">🔐 Secure Login</button>
+      <div id="loginMsg" class="login-hint" style="color:#ef476f"></div>
+    </form>
+    <div class="login-link">
+      <a onclick="showForgotPassword()">Forgot Password? Reset via Security Questions</a>
+    </div>
+    <div class="login-hint">Local School ERP • PostgreSQL + Excel Hybrid</div>
+  </div>
+</section>
+
+<!-- ═══════════ APP ═══════════ -->
+<section id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><span>◆</span></div>
+      <div class="brand-text"><h2>BLUE DIAMOND</h2><p>PUBLIC SCHOOL</p></div>
+    </div>
+    <div class="menu-label">Main</div>
+    <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
+    <button class="nav-btn" data-page="students"><span class="nav-icon">👨‍🎓</span>Students</button>
+    <button class="nav-btn" data-page="admission"><span class="nav-icon">📝</span>Admission</button>
+    <button class="nav-btn" data-page="fee"><span class="nav-icon">💰</span>Fee Submission</button>
+    <button class="nav-btn" data-page="receipts"><span class="nav-icon">🧾</span>Receipts</button>
+    <button class="nav-btn" data-page="pending"><span class="nav-icon">⏳</span>Pending Fees</button>
+    <button class="nav-btn" data-page="notifications"><span class="nav-icon">🔔</span>Alerts<span class="nav-badge hidden" id="notifBadge">0</span></button>
+    <div class="menu-label">Fee Setup</div>
+    <button class="nav-btn" data-page="structure"><span class="nav-icon">💳</span>Fee Structure</button>
+    <button class="nav-btn" data-page="reports"><span class="nav-icon">📊</span>Reports</button>
+    <div class="menu-label">Staff</div>
+    <button class="nav-btn" data-page="staff"><span class="nav-icon">👔</span>Staff</button>
+    <button class="nav-btn" data-page="hiring"><span class="nav-icon">📋</span>Hiring</button>
+    <button class="nav-btn" data-page="attendance"><span class="nav-icon">✅</span>Attendance</button>
+    <button class="nav-btn" data-page="salary"><span class="nav-icon">💵</span>Salary</button>
+    <div class="menu-label">Admin</div>
+    <button class="nav-btn" data-page="users"><span class="nav-icon">👥</span>Users</button>
+    <button class="nav-btn" data-page="audit"><span class="nav-icon">🛡️</span>Audit Log</button>
+    <div class="menu-label">System</div>
+    <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙️</span>Settings</button>
+    <button class="nav-btn" data-page="backup"><span class="nav-icon">💾</span>Backup</button>
+    <button class="nav-btn" id="logoutBtn"><span class="nav-icon">🚪</span>Logout</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" id="mobileMenu">☰</button>
+        <div class="page-title"><h1 id="topTitle">Dashboard</h1>
+          <p id="dbModeLabel">Blue Diamond Public School • Dadri</p></div>
+      </div>
+      <div class="top-actions">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+        <div class="user-pill">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <span id="loggedUser">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-heading">
+          <div><h2>Dashboard Overview</h2><p>Real-time school summary</p></div>
+          <button class="btn btn-primary" onclick="loadDashboard()">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="dashStats"></div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header"><div><h3>Monthly Collection</h3><p>Fee collection trend</p></div></div>
+            <div class="panel-body" id="monthlyChart"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div><h3>Quick Actions</h3><p>Common operations</p></div></div>
+            <div class="panel-body" style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+              <button class="btn btn-primary" onclick="goPage('fee')">💰 Submit Fee</button>
+              <button class="btn btn-secondary" onclick="goPage('admission')">📝 New Admission</button>
+              <button class="btn btn-secondary" onclick="goPage('pending')">⏳ Pending</button>
+              <button class="btn btn-secondary" onclick="goPage('attendance')">✅ Attendance</button>
+              <button class="btn btn-secondary" onclick="goPage('reports')">📊 Reports</button>
+              <button class="btn btn-secondary" onclick="goPage('salary')">💵 Salary</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header"><div><h3>Top Defaulters</h3><p>Highest pending fees</p></div></div>
+            <div class="panel-body" id="topDefaulters" style="padding:0"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div><h3>Class-wise Summary</h3><p>Paid vs pending</p></div></div>
+            <div class="panel-body" id="classSummary" style="padding:0"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div><h3>Recent Transactions</h3><p>Latest fee receipts</p></div></div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap"><table>
+              <thead><tr><th>Receipt</th><th>Date</th><th>Student</th><th>Class</th><th>Fee Type</th><th>Amount</th><th>Mode</th></tr></thead>
+              <tbody id="recentTxns"></tbody>
+            </table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENTS -->
+      <section class="page" id="page-students">
+        <div class="page-heading">
+          <div><h2>Student Management</h2><p>Search and manage students</p></div>
+          <button class="btn btn-primary edit-only" onclick="goPage('admission')">+ Add Student</button>
+        </div>
+        <div class="panel"><div class="panel-body">
+          <div class="toolbar">
+            <input class="form-control search-box" id="studentSearch" placeholder="🔍 Search..." oninput="filterStudents()">
+            <select class="form-control" id="studentClassFilter" onchange="filterStudents()"><option value="">All Classes</option></select>
+            <select class="form-control" id="studentStatusFilter" onchange="filterStudents()">
+              <option value="">All Status</option><option>Active</option><option>Inactive</option>
+            </select>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Father</th><th>Mobile</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="studentsTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- ADMISSION -->
+      <section class="page" id="page-admission">
+        <div class="page-heading"><div><h2>New Admission</h2><p>Admit a new student</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <form id="admissionForm">
+            <div class="form-title">👤 Student Details</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Admission No *</label><input class="form-control" id="admAdmissionNo" required></div>
+              <div class="form-group"><label>Student Name *</label><input class="form-control" id="admStudentName" required></div>
+              <div class="form-group"><label>Father Name</label><input class="form-control" id="admFatherName"></div>
+              <div class="form-group"><label>Mother Name</label><input class="form-control" id="admMotherName"></div>
+              <div class="form-group"><label>Class</label><input class="form-control" id="admClass"></div>
+              <div class="form-group"><label>Section</label><input class="form-control" id="admSection"></div>
+              <div class="form-group"><label>Roll No</label><input class="form-control" id="admRollNo"></div>
+              <div class="form-group"><label>DOB</label><input class="form-control" type="date" id="admDOB"></div>
+              <div class="form-group"><label>Gender</label><select class="form-control" id="admGender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+              <div class="form-group"><label>Mobile</label><input class="form-control" id="admMobile"></div>
+              <div class="form-group"><label>Admission Date</label><input class="form-control" type="date" id="admAdmissionDate"></div>
+              <div class="form-group"><label>Session</label><input class="form-control" id="admSession" value="2026-27"></div>
+              <div class="form-group"><label>Transport</label><select class="form-control" id="admTransport"><option>No</option><option>Yes</option></select></div>
+            </div>
+            <div class="form-group"><label>Address</label><textarea class="form-control" id="admAddress"></textarea></div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">✅ Admit Student</button>
+              <button class="btn btn-secondary" type="button" onclick="this.form.reset()">Clear</button>
+            </div>
+          </form>
+        </div></div>
+      </section>
+
+      <!-- FEE SUBMISSION -->
+      <section class="page" id="page-fee">
+        <div class="page-heading"><div><h2>Fee Submission</h2><p>Record fee payment</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <div class="form-title">🔎 Find Student</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <input class="form-control" id="feeAdmission" placeholder="Enter Admission Number" style="flex:1;min-width:220px">
+            <button class="btn btn-primary" onclick="findFeeStudent()">Search</button>
+          </div>
+          <div id="feeStudentInfo" class="hidden" style="margin-top:18px"></div>
+        </div></div>
+        <div class="panel hidden" id="feeLedgerPanel">
+          <div class="panel-header"><div><h3>Month-wise Fee Status</h3><p>Color-coded: Green=Paid, Yellow=Due, Red=Overdue</p></div>
+            <div id="feeLedgerTotals"></div></div>
+          <div class="panel-body" style="padding:0" id="feeLedgerBody"></div>
+        </div>
+        <div class="panel hidden" id="feeFormPanel"><div class="panel-body">
+          <div class="form-title">💰 Payment Details</div>
+          <form id="feeForm">
+            <input type="hidden" id="selectedAdmission">
+            <div class="form-grid">
+              <div class="form-group"><label>Fee Type</label><select class="form-control" id="feeType"></select></div>
+              <div class="form-group"><label>Month</label><select class="form-control" id="feeMonth"></select></div>
+              <div class="form-group"><label>Amount ₹</label><input class="form-control" type="number" min="1" id="feeAmount" required></div>
+              <div class="form-group"><label>Late Fee ₹</label><input class="form-control" type="number" min="0" id="feeLate" value="0"></div>
+              <div class="form-group"><label>Payment Mode</label><select class="form-control" id="paymentMode"></select></div>
+              <div class="form-group"><label>Transaction No.</label><input class="form-control" id="transactionNo"></div>
+              <div class="form-group"><label>Payment Date</label><input class="form-control" type="date" id="feeDate"></div>
+              <div class="form-group"><label>Remarks</label><input class="form-control" id="feeRemarks"></div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">✓ Submit Fee</button>
+              <button class="btn btn-secondary" type="button" onclick="clearFeeForm()">Clear</button>
+              <button class="btn btn-warning" type="button" onclick="autofillLateFee()">⚡ Auto Late Fee</button>
+            </div>
+          </form>
+        </div></div>
+      </section>
+
+      <!-- RECEIPTS -->
+      <section class="page" id="page-receipts">
+        <div class="page-heading"><div><h2>Fee Receipts</h2><p>Search and print receipts</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <div class="toolbar"><input class="form-control search-box" id="receiptSearch" placeholder="🔍 Search..." oninput="filterReceipts()"></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Receipt</th><th>Date</th><th>Student</th><th>Class</th><th>Fee Type</th><th>Amount</th><th>Late</th><th>Mode</th><th>Action</th></tr></thead>
+            <tbody id="receiptsTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- PENDING -->
+      <section class="page" id="page-pending">
+        <div class="page-heading">
+          <div><h2>Pending Fees</h2><p>Outstanding fee students</p></div>
+          <button class="btn btn-primary" onclick="loadPending()">↻ Refresh</button>
+        </div>
+        <div class="panel"><div class="panel-body">
+          <div class="toolbar">
+            <input class="form-control search-box" id="pendingSearch" placeholder="🔍 Search..." oninput="filterPending()">
+            <select class="form-control" id="pendingClassFilter" onchange="filterPending()"><option value="">All Classes</option></select>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Total</th><th>Paid</th><th>Pending</th><th>Late</th><th>Overdue</th><th>Action</th></tr></thead>
+            <tbody id="pendingTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- STRUCTURE -->
+      <section class="page" id="page-structure">
+        <div class="page-heading"><div><h2>Fee Structure</h2><p>Configure class-wise fee</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Class</th><th>Admission</th><th>Tuition</th><th>Transport</th><th>Exam</th><th>Annual</th><th>Other</th><th>Action</th></tr></thead>
+            <tbody id="structureTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="page" id="page-reports">
+        <div class="page-heading"><div><h2>Reports</h2><p>Filtered reports with Excel download</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label>Report Type</label>
+              <select class="form-control" id="repType">
+                <option value="fees">Fee Transactions</option>
+                <option value="pending">Pending Fees</option>
+                <option value="students">Students</option>
+                <option value="staff">Staff Master</option>
+                <option value="attendance">Staff Attendance</option>
+                <option value="salary">Salary Register</option>
+              </select></div>
+            <div class="form-group"><label>From Date</label><input type="date" class="form-control" id="repFrom"></div>
+            <div class="form-group"><label>To Date</label><input type="date" class="form-control" id="repTo"></div>
+            <div class="form-group"><label>Class</label><select class="form-control" id="repClass"><option value="">All</option></select></div>
+            <div class="form-group"><label>Payment Mode</label><select class="form-control" id="repMode"><option value="">All</option></select></div>
+            <div class="form-group"><label>Month (Salary/Att.)</label><input type="month" class="form-control" id="repMonth"></div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" onclick="generateReport()">▶ Generate</button>
+            <button class="btn btn-success" onclick="exportReport()">⬇ Download Excel</button>
+            <button class="btn btn-secondary" onclick="printReport()">🖨 Print</button>
+          </div>
+        </div></div>
+        <div class="stats-grid small" id="reportStats"></div>
+        <div class="panel">
+          <div class="panel-header"><div><h3>Report Preview</h3><p id="reportMeta">No report generated</p></div></div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap"><table id="reportTable"><thead></thead><tbody></tbody></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAFF -->
+      <section class="page" id="page-staff">
+        <div class="page-heading">
+          <div><h2>Staff Management</h2><p>All staff records</p></div>
+          <button class="btn btn-primary edit-only" onclick="goPage('hiring')">+ Hire Staff</button>
+        </div>
+        <div class="panel"><div class="panel-body">
+          <div class="toolbar"><input class="form-control search-box" id="staffSearch" placeholder="🔍 Search staff..." oninput="filterStaff()"></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Staff ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Mobile</th><th>Basic</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="staffTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- HIRING -->
+      <section class="page" id="page-hiring">
+        <div class="page-heading"><div><h2>Teacher Hiring</h2><p>Hire new staff</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <form id="hiringForm">
+            <div class="form-grid">
+              <div class="form-group"><label>Staff ID *</label><input class="form-control" id="hireStaffId" required></div>
+              <div class="form-group"><label>Name *</label><input class="form-control" id="hireName" required></div>
+              <div class="form-group"><label>Designation</label><input class="form-control" id="hireDesignation"></div>
+              <div class="form-group"><label>Department</label><input class="form-control" id="hireDepartment"></div>
+              <div class="form-group"><label>Mobile</label><input class="form-control" id="hireMobile"></div>
+              <div class="form-group"><label>Joining Date</label><input class="form-control" type="date" id="hireJoining"></div>
+              <div class="form-group"><label>Basic Salary ₹</label><input type="number" class="form-control" id="hireBasic" value="0"></div>
+              <div class="form-group"><label>Allowances ₹</label><input type="number" class="form-control" id="hireAllow" value="0"></div>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" type="submit">✅ Hire Staff</button>
+              <button class="btn btn-secondary" type="button" onclick="this.form.reset()">Clear</button>
+            </div>
+          </form>
+        </div></div>
+      </section>
+
+      <!-- ATTENDANCE -->
+      <section class="page" id="page-attendance">
+        <div class="page-heading">
+          <div><h2>Staff Attendance</h2><p>Check to mark present, uncheck for absent</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="date" class="form-control" id="attDate" style="max-width:180px">
+            <button class="btn btn-primary" onclick="loadAttendance()">Load</button>
+            <button class="btn btn-secondary edit-only" onclick="markAllAtt(true)">✅ All Present</button>
+            <button class="btn btn-secondary edit-only" onclick="markAllAtt(false)">❌ All Absent</button>
+          </div>
+        </div>
+        <div class="stats-grid small" id="attStats"></div>
+        <div class="panel"><div class="panel-body">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Present</th><th>Staff ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Remarks</th></tr></thead>
+            <tbody id="attendanceTable"></tbody>
+          </table></div>
+          <div class="actions">
+            <button class="btn btn-primary edit-only" onclick="saveAttendance()">💾 Save Attendance</button>
+          </div>
+        </div></div>
+      </section>
+
+      <!-- SALARY -->
+      <section class="page" id="page-salary">
+        <div class="page-heading">
+          <div><h2>Salary / Payroll</h2><p>Auto-calculated from attendance</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="month" class="form-control" id="salMonth" style="max-width:180px">
+            <button class="btn btn-primary" onclick="loadSalary()">Load</button>
+            <button class="btn btn-success edit-only" onclick="generateSalary()">⚡ Generate</button>
+            <button class="btn btn-secondary" onclick="exportSalary()">⬇ Excel</button>
+          </div>
+        </div>
+        <div class="stats-grid small" id="salaryStats"></div>
+        <div class="panel"><div class="panel-body">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Staff</th><th>Working</th><th>Present</th><th>Absent</th><th>Half</th><th>LOP</th><th>Basic</th><th>Allow.</th><th>Deduct</th><th>Net</th></tr></thead>
+            <tbody id="salaryTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- USERS -->
+      <section class="page" id="page-users">
+        <div class="page-heading">
+          <div><h2>User Management</h2><p>Accounts, lock/unlock, reset, permissions</p></div>
+          <button class="btn btn-primary edit-only" onclick="openModal('userModal')">+ Add User</button>
+        </div>
+        <div class="panel"><div class="panel-body">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Username</th><th>Role</th><th>Status</th><th>Failed</th><th>Locked</th><th>Action</th></tr></thead>
+            <tbody id="usersTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- AUDIT -->
+      <section class="page" id="page-audit">
+        <div class="page-heading">
+          <div><h2>Audit Log</h2><p>User activities</p></div>
+          <button class="btn btn-primary" onclick="loadAudit()">↻ Refresh</button>
+        </div>
+        <div class="panel"><div class="panel-body">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Date</th><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+            <tbody id="auditTable"></tbody>
+          </table></div>
+        </div></div>
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section class="page" id="page-notifications">
+        <div class="page-heading">
+          <div><h2>Alerts</h2><p>Automatic system alerts</p></div>
+          <button class="btn btn-primary" onclick="loadNotifications()">↻ Refresh</button>
+        </div>
+        <div class="panel"><div class="panel-body" id="notifList"></div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="page-heading"><div><h2>Settings</h2><p>All dynamic configuration</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <form id="settingsForm">
+            <div class="form-title">🏫 School Identity</div>
+            <div class="form-grid">
+              <div class="form-group"><label>School Name</label><input class="form-control" id="sSchoolName"></div>
+              <div class="form-group"><label>School Address</label><input class="form-control" id="sSchoolAddress"></div>
+              <div class="form-group"><label>Academic Session</label><input class="form-control" id="sSession"></div>
+              <div class="form-group"><label>Session Start Month</label>
+                <select class="form-control" id="sStartMonth">
+                  <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+                  <option value="4" selected>Apr</option><option value="5">May</option><option value="6">Jun</option>
+                  <option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option>
+                  <option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option>
+                </select></div>
+              <div class="form-group"><label>Currency</label><input class="form-control" id="sCurrency"></div>
+              <div class="form-group"><label>Receipt Prefix</label><input class="form-control" id="sPrefix"></div>
+            </div>
+            <div class="form-title" style="margin-top:20px">📅 Fee & Late Fee Rules</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Due Day</label><input type="number" class="form-control" id="sDueDay" min="1" max="28"></div>
+              <div class="form-group"><label>Grace Days</label><input type="number" class="form-control" id="sGrace" min="0"></div>
+              <div class="form-group"><label>Late Fee Enabled</label><select class="form-control" id="sLateEnabled"><option>Yes</option><option>No</option></select></div>
+              <div class="form-group"><label>Late Fee Type</label><select class="form-control" id="sLateType"><option>Per Day</option><option>Fixed</option><option>Percent</option></select></div>
+              <div class="form-group"><label>Late Fee Amount ₹</label><input type="number" class="form-control" id="sLateAmount"></div>
+              <div class="form-group"><label>Late Fee Percent %</label><input type="number" class="form-control" id="sLatePercent"></div>
+              <div class="form-group"><label>Max Late Fee ₹</label><input type="number" class="form-control" id="sMaxLate"></div>
+              <div class="form-group"><label>Max Login Attempts</label><input type="number" class="form-control" id="sMaxAttempts"></div>
+              <div class="form-group"><label>Allow Backdate Attendance</label><select class="form-control" id="sAllowBackdate"><option>No</option><option>Yes</option></select></div>
+            </div>
+            <div class="form-title" style="margin-top:20px">💰 Staff / Salary Rules</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Working Days/Month</label><input type="number" class="form-control" id="sWorkingDays"></div>
+              <div class="form-group"><label>Half Day Count</label><input type="number" step="0.1" class="form-control" id="sHalfDay"></div>
+              <div class="form-group"><label>LOP Deduction</label><select class="form-control" id="sLop"><option>Yes</option><option>No</option></select></div>
+            </div>
+            <div class="actions edit-only"><button class="btn btn-primary" type="submit">💾 Save Settings</button></div>
+          </form>
+        </div></div>
+
+        <div class="panel">
+          <div class="panel-header"><div><h3>🔐 My Security Questions</h3><p>Set 3 questions for password recovery</p></div></div>
+          <div class="panel-body">
+            <form id="securityForm">
+              <div id="securityQuestionsContainer"></div>
+              <div class="actions"><button class="btn btn-primary" type="submit">Save Security Questions</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div><h3>🔑 Change My Password</h3></div></div>
+          <div class="panel-body">
+            <form id="passwordForm">
+              <div class="form-grid">
+                <div class="form-group"><label>Current Password</label><input type="password" class="form-control" id="oldPassword" required></div>
+                <div class="form-group"><label>New Password</label><input type="password" class="form-control" id="newPassword" required></div>
+                <div class="form-group"><label>Confirm Password</label><input type="password" class="form-control" id="confirmPassword" required></div>
+              </div>
+              <div class="actions"><button class="btn btn-primary" type="submit">🔐 Change Password</button></div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- BACKUP -->
+      <section class="page" id="page-backup">
+        <div class="page-heading"><div><h2>Backup & Sync</h2><p>Protect and sync your data</p></div></div>
+        <div class="panel"><div class="panel-body">
+          <div id="dbStatusBox" style="padding:16px;border-radius:12px;background:var(--input-bg);margin-bottom:16px"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary edit-only" onclick="createBackup()">💾 Create Backup</button>
+            <button class="btn btn-success edit-only" onclick="syncNow()">🔄 Sync Excel → PostgreSQL</button>
+            <button class="btn btn-secondary edit-only" onclick="downloadExcel()">⬇ Download Excel</button>
+          </div>
+        </div></div>
+        <div class="panel">
+          <div class="panel-header"><div><h3>Backup History</h3></div><button class="btn btn-secondary btn-sm" onclick="loadBackups()">Refresh</button></div>
+          <div class="panel-body" style="padding:0">
+            <div class="table-wrap"><table><thead><tr><th>File</th><th>Size (KB)</th><th>Created</th></tr></thead><tbody id="backupTable"></tbody></table></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</section>
+
+<!-- ═══════════ MODALS ═══════════ -->
+<div class="modal" id="userModal"><div class="modal-card">
+  <div class="modal-header"><h3>Create User</h3><button class="close-btn" onclick="closeModal('userModal')">×</button></div>
+  <div class="modal-body">
+    <form id="userForm">
+      <div class="form-grid">
+        <div class="form-group"><label>Username</label><input class="form-control" id="newUsername" required></div>
+        <div class="form-group"><label>Password</label><input class="form-control" type="password" id="newUserPassword" required></div>
+        <div class="form-group"><label>Role</label><select class="form-control" id="newUserRole"></select></div>
+      </div>
+      <div class="actions"><button class="btn btn-primary" type="submit">Create</button>
+        <button class="btn btn-secondary" type="button" onclick="closeModal('userModal')">Cancel</button></div>
+    </form>
+  </div>
+</div></div>
+
+<div class="modal" id="receiptModal"><div class="modal-card">
+  <div class="modal-header"><h3>Fee Receipt</h3><button class="close-btn" onclick="closeModal('receiptModal')">×</button></div>
+  <div class="modal-body">
+    <div class="receipt" id="receiptContent"></div>
+    <div class="actions" style="justify-content:center">
+      <button class="btn btn-primary" onclick="printReceipt()">🖨 Print</button>
+      <button class="btn btn-secondary" onclick="closeModal('receiptModal')">Close</button>
+    </div>
+  </div>
+</div></div>
+
+<div class="modal" id="forgotModal"><div class="modal-card">
+  <div class="modal-header"><h3>Reset Password via Security Questions</h3><button class="close-btn" onclick="closeModal('forgotModal')">×</button></div>
+  <div class="modal-body" id="forgotBody"></div>
+</div></div>
+
+<div id="toastContainer"></div>
+
+<script>
+/* ═══════════ STATE ═══════════ */
+const state = {
+  user: null, role: null, perms: {}, meta: {},
+  students: [], receipts: [], pending: [], users: [], staff: [],
+  structure: [], audit: [], salary: [], reportRows: [],
+  currentLedger: null, lastReceipt: null,
+  attRecords: [], securityQuestions: []
+};
+
+/* ═══════════ HELPERS ═══════════ */
+const $ = id => document.getElementById(id);
+
+function money(v) {
+  const n = Number(v || 0);
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+}
+function esc(v) {
+  return String(v ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+}
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function monthStr() { return new Date().toISOString().slice(0, 7); }
+
+function showToast(msg, type = 'success') {
+  const c = $('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+async function api(url, options = {}) {
+  try {
+    const res = await fetch(url, {
+      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      ...options
+    });
+    let data = {};
+    try { data = await res.json(); } catch (e) { }
+    if (res.status === 401 && !url.includes('/api/login') && !url.includes('/api/forgot-password')) {
+      showLogin();
+      throw new Error('Session expired. Please login again.');
+    }
+    if (!res.ok) throw new Error(data.message || 'Something went wrong.');
+    return data;
+  } catch (err) {
+    if (err.message === 'Failed to fetch') throw new Error('Server not reachable. Check if app.py is running.');
+    throw err;
+  }
+}
+
+function openModal(id) { $(id).classList.add('show'); }
+function closeModal(id) { $(id).classList.remove('show'); }
+function can(section, level = 'view') {
+  const order = { none: 0, view: 1, edit: 2 };
+  const have = order[String(state.perms?.[section] || 'none').toLowerCase()] ?? 0;
+  return have >= order[level];
+}
+
+/* ═══════════ THEME ═══════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = $('themeToggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('bd_theme', theme);
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem('bd_theme') || 'light');
+$('themeToggle').addEventListener('click', toggleTheme);
+
+/* ═══════════ LOGIN ═══════════ */
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('loginMsg').textContent = '';
+  try {
+    const r = await api('/api/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: $('loginUsername').value.trim(),
+        password: $('loginPassword').value
+      })
+    });
+    state.user = r.username; state.role = r.role; state.perms = r.permissions || {};
+    showApp();
+    showToast('Login successful.');
+  } catch (err) {
+    $('loginMsg').textContent = err.message;
+    showToast(err.message, 'error');
+  }
+});
+
+async function checkSession() {
+  try {
+    const r = await api('/api/session');
+    if (r.logged_in) {
+      state.user = r.username; state.role = r.role; state.perms = r.permissions || {};
+      showApp();
+    } else showLogin();
+  } catch (e) { showLogin(); }
+}
+function showLogin() {
+  $('loginPage').style.display = 'flex';
+  $('app').style.display = 'none';
+}
+
+async function showApp() {
+  $('loginPage').style.display = 'none';
+  $('app').style.display = 'block';
+  $('loggedUser').textContent = `${state.user} • ${state.role}`;
+  $('userAvatar').textContent = (state.user || 'A').charAt(0).toUpperCase();
+
+  try { state.meta = await api('/api/meta'); } catch (e) { state.meta = {}; }
+
+  try {
+    const db = await api('/api/db-status');
+    $('dbModeLabel').textContent = `Blue Diamond • ${db.mode} Mode`;
+    $('dbStatusBox').innerHTML = `<strong>Database:</strong> ${esc(db.message)}`;
+  } catch (e) { }
+
+  buildSelects();
+  applyPermissions();
+  $('attDate').value = todayStr();
+  $('salMonth').value = monthStr();
+  $('repMonth').value = monthStr();
+  $('feeDate').value = todayStr();
+  $('admAdmissionDate').value = todayStr();
+  $('hireJoining').value = todayStr();
+
+  loadDashboard(); loadStudents(); loadReceipts(); loadPending();
+  loadStructure(); loadSettings(); loadNotifications(); loadStaff();
+}
+
+function applyPermissions() {
+  document.querySelectorAll('.nav-btn[data-page]').forEach(btn => {
+    const sec = btn.dataset.page;
+    btn.style.display = can(sec, 'view') ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.edit-only').forEach(el => {
+    const page = el.closest('.page');
+    const sec = page ? page.id.replace('page-', '') : null;
+    el.style.display = (sec && can(sec, 'edit')) ? '' : 'none';
+  });
+  const active = document.querySelector('.page.active');
+  if (active) {
+    const sec = active.id.replace('page-', '');
+    if (!can(sec, 'view')) {
+      const first = Object.keys({ dashboard: 1 }).find(s => can(s, 'view'));
+      if (first) goPage(first);
+    }
+  }
+}
+
+/* ═══════════ BUILD SELECTS ═══════════ */
+function buildSelects() {
+  const m = state.meta || {};
+  const classOpts = (m.classes || []).map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  ['studentClassFilter', 'pendingClassFilter', 'repClass'].forEach(id => {
+    const el = $(id); if (!el) return;
+    const first = el.querySelector('option')?.outerHTML || '';
+    el.innerHTML = first + classOpts;
+  });
+  $('repMode').innerHTML = `<option value="">All</option>` + (m.payment_modes || []).map(x => `<option>${esc(x)}</option>`).join('');
+  $('feeType').innerHTML = (m.fee_types || []).map(x => `<option>${esc(x)}</option>`).join('');
+  $('paymentMode').innerHTML = (m.payment_modes || []).map(x => `<option>${esc(x)}</option>`).join('');
+  $('newUserRole').innerHTML = (m.roles || []).map(x => `<option>${esc(x)}</option>`).join('');
+  const monthOpts = (m.session_months || []).map(x => `<option value="${x.key}">${esc(x.label)}</option>`).join('');
+  $('feeMonth').innerHTML = `<option value="">Select Month</option>` + monthOpts;
+  state.securityQuestions = m.security_questions || [];
+  buildSecurityQuestionInputs();
+}
+
+function buildSecurityQuestionInputs() {
+  const c = $('securityQuestionsContainer');
+  if (!c) return;
+  c.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const div = document.createElement('div');
+    div.className = 'form-grid-2';
+    div.style.marginBottom = '10px';
+    div.innerHTML = `
+      <div class="form-group"><label>Question ${i + 1}</label>
+        <select class="form-control sec-q" data-idx="${i}">
+          <option value="">-- Select --</option>
+          ${(state.securityQuestions || []).map(q => `<option>${esc(q)}</option>`).join('')}
+        </select></div>
+      <div class="form-group"><label>Answer</label>
+        <input class="form-control sec-a" data-idx="${i}" placeholder="Your answer"></div>`;
+    c.appendChild(div);
+  }
+}
+
+/* ═══════════ NAV ═══════════ */
+document.querySelectorAll('.nav-btn[data-page]').forEach(b => {
+  b.addEventListener('click', () => goPage(b.dataset.page));
+});
+function goPage(page) {
+  if (!can(page, 'view')) { showToast('Access denied.', 'error'); return; }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = $('page-' + page);
+  if (!target) return;
+  target.classList.add('active');
+  document.querySelectorAll('.nav-btn[data-page]').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === page);
+  });
+  const titles = {
+    dashboard: 'Dashboard', students: 'Students', admission: 'Admission',
+    fee: 'Fee Submission', receipts: 'Receipts', pending: 'Pending Fees',
+    structure: 'Fee Structure', reports: 'Reports', staff: 'Staff',
+    hiring: 'Hiring', attendance: 'Attendance', salary: 'Salary',
+    users: 'Users', audit: 'Audit', notifications: 'Alerts',
+    settings: 'Settings', backup: 'Backup'
+  };
+  $('topTitle').textContent = titles[page] || 'Portal';
+  $('sidebar').classList.remove('open');
+  if (page === 'reports') generateReport();
+  if (page === 'users') loadUsers();
+  if (page === 'audit') loadAudit();
+  if (page === 'pending') loadPending();
+  if (page === 'attendance') loadAttendance();
+  if (page === 'salary') loadSalary();
+  if (page === 'backup') loadBackups();
+  if (page === 'notifications') loadNotifications();
+}
+$('mobileMenu').addEventListener('click', () => $('sidebar').classList.toggle('open'));
+$('logoutBtn').addEventListener('click', async () => {
+  try { await api('/api/logout', { method: 'POST' }); } catch (e) { }
+  state.user = null; state.perms = {};
+  showLogin();
+  showToast('Logged out.');
+});
+
+/* ═══════════ DASHBOARD ═══════════ */
+async function loadDashboard() {
+  try {
+    const r = await api('/api/dashboard');
+    const d = r.data;
+    $('dashStats').innerHTML = `
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Total Students</div><div class="stat-value">${d.total_students}</div><div class="stat-sub">${d.active_students} active</div></div><div class="stat-icon">👨‍🎓</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Collection</div><div class="stat-value">${money(d.total_collected)}</div><div class="stat-sub">All time</div></div><div class="stat-icon">💰</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Pending</div><div class="stat-value">${money(d.pending)}</div><div class="stat-sub">Outstanding</div></div><div class="stat-icon">⏳</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Late Fee</div><div class="stat-value">${money(d.late_fee_total)}</div><div class="stat-sub">Applicable</div></div><div class="stat-icon">⚠️</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Today</div><div class="stat-value">${money(d.today_collection)}</div><div class="stat-sub">Today's collection</div></div><div class="stat-icon">📅</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">This Month</div><div class="stat-value">${money(d.month_collection)}</div><div class="stat-sub">Monthly</div></div><div class="stat-icon">📈</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Overdue</div><div class="stat-value">${d.overdue_students}</div><div class="stat-sub">${money(d.overdue_amount)} overdue</div></div><div class="stat-icon">🔴</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Due Today</div><div class="stat-value">${d.due_today}</div><div class="stat-sub">Installments</div></div><div class="stat-icon">⏰</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Staff</div><div class="stat-value">${d.total_staff}</div><div class="stat-sub">Active</div></div><div class="stat-icon">👔</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Present</div><div class="stat-value">${d.present_today}</div><div class="stat-sub">${d.leave_today} on leave</div></div><div class="stat-icon">✅</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Absent</div><div class="stat-value">${d.absent_today}</div><div class="stat-sub">Staff</div></div><div class="stat-icon">❌</div></div></div>
+      <div class="stat-card"><div class="stat-top"><div><div class="stat-label">Payroll</div><div class="stat-value">${money(d.monthly_payroll)}</div><div class="stat-sub">Basic + Allow.</div></div><div class="stat-icon">💵</div></div></div>`;
+
+    drawMonthlyChart(d.monthly_collection);
+
+    $('topDefaulters').innerHTML = (d.top_defaulters || []).length
+      ? d.top_defaulters.map(x => `
+        <div class="ledger-row overdue">
+          <div class="ledger-left"><strong>${esc(x.student_name)}</strong>
+            <small>${esc(x.admission_no)} • Class ${esc(x.class_name)}-${esc(x.section)}</small></div>
+          <div style="text-align:right"><div style="color:var(--danger);font-weight:800">${money(x.pending)}</div>
+            <small style="color:var(--muted);font-size:10px">${x.overdue_days} days overdue</small></div>
+        </div>`).join('')
+      : `<div style="padding:24px;text-align:center;color:var(--success)">🎉 No pending fees!</div>`;
+
+    $('classSummary').innerHTML = (d.class_collection || []).map(c => `
+      <div class="ledger-row">
+        <div class="ledger-left"><strong>Class ${esc(c.class_name)}</strong><small>Paid: ${money(c.paid)}</small></div>
+        <div style="text-align:right;color:var(--danger);font-weight:800">${money(c.pending)}</div>
+      </div>`).join('') || `<div style="padding:24px;text-align:center;color:var(--muted)">No data</div>`;
+
+    $('recentTxns').innerHTML = (d.recent_transactions || []).map(f => `
+      <tr><td><strong>${esc(f['Receipt No'])}</strong></td><td>${esc(f['Date'])}</td>
+        <td>${esc(f['Student Name'])}</td><td>${esc(f['Class'])}-${esc(f['Section'])}</td>
+        <td>${esc(f['Fee Type'])}</td><td><strong>${money(f['Amount'])}</strong></td>
+        <td><span class="badge badge-blue">${esc(f['Payment Mode'])}</span></td></tr>`).join('')
+      || `<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">No transactions yet.</td></tr>`;
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+function drawMonthlyChart(data) {
+  const c = $('monthlyChart');
+  if (!data || !data.length) {
+    c.innerHTML = `<div style="height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px">No collection data yet.</div>`;
+    return;
+  }
+  const max = Math.max(...data.map(d => Number(d.amount)), 1);
+  c.innerHTML = `<div style="height:200px;display:flex;align-items:flex-end;gap:10px;padding-top:16px">${
+    data.slice(-8).map(d => {
+      const v = Number(d.amount);
+      const h = Math.max((v / max) * 150, 5);
+      return `<div style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px">
+        <div style="font-size:9px;color:var(--muted)">${money(v)}</div>
+        <div style="width:min(35px,70%);background:linear-gradient(180deg,#1caaff,#1551d6);border-radius:8px 8px 3px 3px;height:${h}px"></div>
+        <div style="font-size:9px;color:var(--muted)">${esc(d.month.slice(5))}/${esc(d.month.slice(2, 4))}</div>
+      </div>`;
+    }).join('')
+  }</div>`;
+}
+
+/* ═══════════ STUDENTS ═══════════ */
+async function loadStudents() {
+  try {
+    const r = await api('/api/students');
+    state.students = r.students || [];
+    renderStudents(state.students);
+  } catch (e) { }
+}
+function renderStudents(list) {
+  const tb = $('studentsTable');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:36px;color:var(--muted)">No students found.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(s => {
+    const active = String(s['Status'] || '').toLowerCase() === 'active';
+    return `<tr>
+      <td><strong>${esc(s['Admission No'])}</strong></td>
+      <td>${esc(s['Student Name'])}</td>
+      <td>${esc(s['Class'])}-${esc(s['Section'])}</td>
+      <td>${esc(s['Father Name'])}</td>
+      <td>${esc(s['Mobile'])}</td>
+      <td><span class="badge ${active ? 'badge-green' : 'badge-red'}">${active ? 'Active' : 'Inactive'}</span></td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="viewStudent('${esc(s['Admission No'])}')">View</button>
+        ${can('students', 'edit') ? `<button class="btn btn-primary btn-sm" onclick="editStudent('${esc(s['Admission No'])}')">Edit</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+function filterStudents() {
+  const q = $('studentSearch').value.toLowerCase();
+  const cls = $('studentClassFilter').value.toLowerCase();
+  const st = $('studentStatusFilter').value.toLowerCase();
+  renderStudents(state.students.filter(s => {
+    const text = Object.values(s).join(' ').toLowerCase();
+    const cm = !cls || String(s['Class'] || '').toLowerCase() === cls;
+    const sm = !st || String(s['Status'] || '').toLowerCase() === st;
+    return text.includes(q) && cm && sm;
+  }));
+}
+function editStudent(adm) {
+  goPage('admission');
+  const s = state.students.find(x => String(x['Admission No']) === String(adm));
+  if (!s) return;
+  $('admAdmissionNo').value = s['Admission No'] || '';
+  $('admStudentName').value = s['Student Name'] || '';
+  $('admFatherName').value = s['Father Name'] || '';
+  $('admMotherName').value = s['Mother Name'] || '';
+  $('admClass').value = s['Class'] || '';
+  $('admSection').value = s['Section'] || '';
+  $('admRollNo').value = s['Roll No'] || '';
+  $('admDOB').value = s['DOB'] || '';
+  $('admGender').value = s['Gender'] || 'Male';
+  $('admMobile').value = s['Mobile'] || '';
+  $('admAddress').value = s['Address'] || '';
+  $('admAdmissionDate').value = s['Admission Date'] || '';
+  $('admSession').value = s['Session'] || '2026-27';
+  $('admTransport').value = s['Transport'] || 'No';
+  $('admissionForm').dataset.editMode = adm;
+  showToast('Student data loaded. Edit and save.');
+}
+
+async function viewStudent(adm) {
+  try {
+    const r = await api(`/api/students/${encodeURIComponent(adm)}/history`);
+    const s = r.student, l = r.ledger;
+    const monthRows = (l.months || []).map(m => {
+      const cls = m.status === 'Paid' ? 'paid' : (m.status === 'Overdue' ? 'overdue' : 'due');
+      return `<div class="ledger-row ${cls}">
+        <div class="ledger-left"><strong>${esc(m.label)}</strong>
+          <small>Due: ${esc(m.due_date)} • Paid: ${money(m.paid)}${m.days_overdue > 0 ? ` • ${m.days_overdue} days late` : ''}</small></div>
+        <div style="text-align:right">
+          ${m.pending > 0 ? `<span style="color:var(--danger);font-weight:800">${money(m.pending)}</span>` : `<span style="color:var(--success);font-weight:700">Paid</span>`}
+          ${m.late_fee > 0 ? `<small style="display:block;color:#a06d00;font-size:10px">+${money(m.late_fee)} late</small>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    const txnRows = (r.transactions || []).map(t => `
+      <tr><td>${esc(t['Receipt No'])}</td><td>${esc(t['Date'])}</td>
+        <td>${esc(t['Fee Type'])}</td><td>${esc(t['Month'] || '—')}</td>
+        <td>${money(t['Amount'])}</td><td>${money(t['Late Fee'])}</td>
+        <td>${esc(t['Payment Mode'])}</td></tr>`).join('')
+      || `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No payments.</td></tr>`;
+
+    const html = `
+      <div class="stats-grid small">
+        <div class="stat-card"><div class="stat-label">Total Demand</div><div class="stat-value">${money(l.total_due)}</div></div>
+        <div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-value" style="color:var(--success)">${money(l.total_paid)}</div></div>
+        <div class="stat-card"><div class="stat-label">Pending + Late</div><div class="stat-value" style="color:var(--danger)">${money(l.total_payable)}</div></div>
+      </div>
+      <div class="panel"><div class="panel-header">
+        <div><h3>${esc(s['Student Name'])}</h3><p>${esc(s['Admission No'])} • Class ${esc(s['Class'])}-${esc(s['Section'])} • Father: ${esc(s['Father Name'])}</p></div>
+        <div style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:800">Monthly Fee</div>
+          <strong>${money(l.monthly_fee)}</strong></div></div>
+        <div class="panel-body" style="padding:0">${monthRows || '<div style="padding:24px;text-align:center;color:var(--muted)">No months elapsed.</div>'}</div>
+      </div>
+      <div class="panel"><div class="panel-header"><div><h3>Payment History</h3><p>${(r.transactions || []).length} transactions</p></div></div>
+        <div class="panel-body" style="padding:0">
+          <div class="table-wrap"><table><thead><tr><th>Receipt</th><th>Date</th><th>Fee Type</th><th>Month</th><th>Amount</th><th>Late</th><th>Mode</th></tr></thead>
+          <tbody>${txnRows}</tbody></table></div></div></div>`;
+
+    const modal = document.createElement('div');
+    modal.className = 'modal show';
+    modal.innerHTML = `<div class="modal-card wide">
+      <div class="modal-header"><h3>Student Profile</h3><button class="close-btn" onclick="this.closest('.modal').remove()">×</button></div>
+      <div class="modal-body">${html}</div></div>`;
+    document.body.appendChild(modal);
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+/* ═══════════ ADMISSION ═══════════ */
+$('admissionForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const editMode = $('admissionForm').dataset.editMode;
+  const data = {
+    admission_no: $('admAdmissionNo').value.trim(),
+    student_name: $('admStudentName').value.trim(),
+    father_name: $('admFatherName').value,
+    mother_name: $('admMotherName').value,
+    class_name: $('admClass').value,
+    section: $('admSection').value,
+    roll_no: $('admRollNo').value,
+    dob: $('admDOB').value,
+    gender: $('admGender').value,
+    mobile: $('admMobile').value,
+    address: $('admAddress').value,
+    admission_date: $('admAdmissionDate').value,
+    session: $('admSession').value,
+    transport: $('admTransport').value
+  };
+  try {
+    let r;
+    if (editMode) {
+      r = await api(`/api/students/${encodeURIComponent(editMode)}`, { method: 'PUT', body: JSON.stringify(data) });
+    } else {
+      r = await api('/api/students', { method: 'POST', body: JSON.stringify(data) });
+    }
+    showToast(r.message);
+    $('admissionForm').reset();
+    $('admissionForm').dataset.editMode = '';
+    $('admAdmissionDate').value = todayStr();
+    await loadStudents(); await loadDashboard();
+  } catch (err) { showToast(err.message, 'error'); }
+});
+
+/* ═══════════ FEE SUBMISSION ═══════════ */
+async function findFeeStudent() {
+  const adm = $('feeAdmission').value.trim();
+  if (!adm) { showToast('Enter admission number.', 'error'); return; }
+  try {
+    const r = await api(`/api/students/${encodeURIComponent(adm)}/history`);
+    const s = r.student, l = r.ledger;
+    state.currentLedger = l;
+
+    $('feeStudentInfo').classList.remove('hidden');
+    $('feeStudentInfo').innerHTML = `
+      <div style="padding:16px;border-radius:14px;background:var(--input-bg);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+        <div><div style="font-weight:850;font-size:16px">${esc(s['Student Name'])}</div>
+          <div style="color:var(--muted);font-size:12px;margin-top:4px">${esc(s['Admission No'])} • Class ${esc(s['Class'])}-${esc(s['Section'])} • Monthly: ${money(l.monthly_fee)}</div></div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:800">Paid</div><strong style="color:var(--success)">${money(l.total_paid)}</strong></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:800">Pending</div><strong style="color:var(--danger)">${money(l.pending)}</strong></div>
+          <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:800">Late Fee</div><strong style="color:#a06d00">${money(l.late_fee)}</strong></div>
+        </div></div>`;
+
+    $('feeLedgerPanel').classList.remove('hidden');
+    $('feeLedgerBody').innerHTML = (l.months || []).map(m => {
+      const cls = m.status === 'Paid' ? 'paid' : (m.status === 'Overdue' ? 'overdue' : 'due');
+      return `<div class="ledger-row ${cls}">
+        <div class="ledger-left"><strong>${esc(m.label)}</strong>
+          <small>Due ${esc(m.due_date)} • Paid ${money(m.paid)}${m.days_overdue > 0 ? ` • ${m.days_overdue} days late` : ''}</small></div>
+        <div style="text-align:right">
+          ${m.pending > 0 ? `<span style="color:var(--danger);font-weight:800">${money(m.pending)}</span>` : `<span style="color:var(--success);font-weight:700">Paid</span>`}
+          ${m.late_fee > 0 ? `<small style="display:block;color:#a06d00;font-size:10px">+${money(m.late_fee)} late</small>` : ''}
+          <span class="badge ${m.status === 'Paid' ? 'badge-green' : (m.status === 'Overdue' ? 'badge-red' : 'badge-yellow')}">${esc(m.status)}</span>
+        </div></div>`;
+    }).join('') || '<div style="padding:20px;text-align:center;color:var(--muted)">No months elapsed.</div>';
+
+    $('feeLedgerTotals').innerHTML = `<strong style="color:var(--danger)">Total Payable: ${money(l.total_payable)}</strong>`;
+    $('feeFormPanel').classList.remove('hidden');
+    $('selectedAdmission').value = adm;
+
+    const pendingMonth = (l.months || []).find(m => m.pending > 0);
+    if (pendingMonth) {
+      $('feeMonth').value = pendingMonth.month;
+      $('feeAmount').value = pendingMonth.pending;
+      $('feeLate').value = pendingMonth.late_fee || 0;
+    } else {
+      $('feeMonth').value = l.months.length ? l.months[l.months.length - 1].month : '';
+      $('feeAmount').value = l.monthly_fee;
+      $('feeLate').value = 0;
+    }
+  } catch (e) {
+    showToast(e.message, 'error');
+    $('feeStudentInfo').classList.add('hidden');
+    $('feeFormPanel').classList.add('hidden');
+    $('feeLedgerPanel').classList.add('hidden');
+  }
+}
+
+function autofillLateFee() {
+  const l = state.currentLedger;
+  if (!l) { showToast('Search a student first.', 'error'); return; }
+  const mk = $('feeMonth').value;
+  const m = (l.months || []).find(x => x.month === mk);
+  if (m) {
+    $('feeLate').value = m.late_fee || 0;
+    if (!$('feeAmount').value || Number($('feeAmount').value) === 0) $('feeAmount').value = m.pending;
+    showToast('Late fee auto-filled.');
+  } else showToast('No data for this month.', 'error');
+}
+
+function clearFeeForm() {
+  $('feeForm').reset();
+  $('feeDate').value = todayStr();
+  $('feeFormPanel').classList.add('hidden');
+  $('feeLedgerPanel').classList.add('hidden');
+  $('feeStudentInfo').classList.add('hidden');
+  $('feeAdmission').value = '';
+  state.currentLedger = null;
+}
+
+$('feeForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const data = {
+    admission_no: $('selectedAdmission').value,
+    fee_type: $('feeType').value,
+    month: $('feeMonth').value,
+    amount: $('feeAmount').value,
+    late_fee: $('feeLate').value,
+    payment_mode: $('paymentMode').value,
+    transaction_no: $('transactionNo').value,
+    remarks: $('feeRemarks').value,
+    date: $('feeDate').value
+  };
+  try {
+    const r = await api('/api/fees', { method: 'POST', body: JSON.stringify(data) });
+    showToast(r.message);
+    const rec = r.receipt_no;
+    clearFeeForm();
+    await loadDashboard(); await loadReceipts(); await loadPending(); await loadNotifications();
+    await showLatestReceipt(rec);
+  } catch (err) { showToast(err.message, 'error'); }
+});
+
+/* ═══════════ RECEIPTS ═══════════ */
+async function loadReceipts() {
+  try {
+    const r = await api('/api/fees');
+    state.receipts = r.fees || [];
+    renderReceipts(state.receipts);
+  } catch (e) { }
+}
+function renderReceipts(list) {
+  const tb = $('receiptsTable');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:36px;color:var(--muted)">No receipts found.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.slice().reverse().map(f => `
+    <tr><td><strong>${esc(f['Receipt No'])}</strong></td><td>${esc(f['Date'])}</td>
+      <td>${esc(f['Student Name'])}</td><td>${esc(f['Class'])}-${esc(f['Section'])}</td>
+      <td>${esc(f['Fee Type'])}</td><td><strong>${money(f['Amount'])}</strong></td>
+      <td>${money(f['Late Fee'])}</td><td><span class="badge badge-blue">${esc(f['Payment Mode'])}</span></td>
+      <td><button class="btn btn-primary btn-sm" onclick="showReceipt('${esc(f['Receipt No'])}')">Print</button></td></tr>`).join('');
+}
+function filterReceipts() {
+  const q = $('receiptSearch').value.toLowerCase();
+  renderReceipts(state.receipts.filter(f => Object.values(f).join(' ').toLowerCase().includes(q)));
+}
+async function showLatestReceipt(no) { await loadReceipts(); showReceipt(no); }
+function showReceipt(no) {
+  const f = state.receipts.find(x => String(x['Receipt No']) === String(no));
+  if (!f) { showToast('Receipt not found.', 'error'); return; }
+  state.lastReceipt = f;
+  const s = state.meta.settings || {};
+  $('receiptContent').innerHTML = `
+    <div class="receipt-head"><h1>💎 ${esc(s['School Name'] || 'BLUE DIAMOND PUBLIC SCHOOL')}</h1>
+      <p>${esc(s['School Address'] || 'Dadri, Gautam Budh Nagar, Uttar Pradesh')}</p></div>
+    <div class="receipt-title">FEE RECEIPT</div>
+    <div class="receipt-info">
+      <div><strong>Receipt No:</strong> ${esc(f['Receipt No'])}</div>
+      <div><strong>Date:</strong> ${esc(f['Date'])} ${esc(f['Time'] || '')}</div>
+      <div><strong>Student:</strong> ${esc(f['Student Name'])}</div>
+      <div><strong>Admission:</strong> ${esc(f['Admission No'])}</div>
+      <div><strong>Class:</strong> ${esc(f['Class'])}-${esc(f['Section'])}</div>
+      <div><strong>Payment Mode:</strong> ${esc(f['Payment Mode'])}</div>
+      ${f['Transaction No'] ? `<div><strong>Txn No:</strong> ${esc(f['Transaction No'])}</div>` : ''}
+      <div><strong>Received By:</strong> ${esc(f['Received By'])}</div></div>
+    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+      <thead><tr><th style="border:1px solid var(--border);padding:10px">Fee Particular</th>
+        <th style="border:1px solid var(--border);padding:10px">Month</th>
+        <th style="border:1px solid var(--border);padding:10px;text-align:right">Amount</th></tr></thead>
+      <tbody><tr><td style="border:1px solid var(--border);padding:10px">${esc(f['Fee Type'])}</td>
+        <td style="border:1px solid var(--border);padding:10px">${esc(f['Month'] || '—')}</td>
+        <td style="border:1px solid var(--border);padding:10px;text-align:right">${money(f['Amount'])}</td></tr>
+        ${Number(f['Late Fee'] || 0) > 0 ? `<tr><td style="border:1px solid var(--border);padding:10px">Late Fee</td>
+          <td style="border:1px solid var(--border);padding:10px">—</td>
+          <td style="border:1px solid var(--border);padding:10px;text-align:right">${money(f['Late Fee'])}</td></tr>` : ''}
+      </tbody></table>
+    <div class="receipt-total">Total Paid: ${money(Number(f['Amount'] || 0) + Number(f['Late Fee'] || 0))}</div>
+    <div class="receipt-footer">Thank you for your payment.<br>This is a computer-generated receipt.</div>`;
+  openModal('receiptModal');
+}
+function printReceipt() {
+  const content = $('receiptContent').innerHTML;
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>Fee Receipt</title><style>
+    *{box-sizing:border-box}body{font-family:Arial,sans-serif;padding:30px;color:#17233c}
+    .receipt{max-width:700px;margin:auto;border:1px solid #dce5f2;padding:35px}
+    .receipt-head{text-align:center;border-bottom:2px solid #183f78;padding-bottom:20px}
+    .receipt-head h1{font-size:22px;color:#092b60}.receipt-head p{font-size:12px;margin-top:5px}
+    .receipt-title{text-align:center;margin:20px 0;font-weight:bold;letter-spacing:2px}
+    .receipt-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:12px;text-align:left}
+    .receipt-total{text-align:right;margin-top:15px;font-weight:bold;font-size:18px}
+    .receipt-footer{text-align:center;margin-top:30px;color:#777;font-size:11px}
+  </style></head><body><div class="receipt">${content}</div></body></html>`);
+  w.document.close(); w.focus();
+  setTimeout(() => w.print(), 400);
+}
+
+/* ═══════════ PENDING ═══════════ */
+async function loadPending() {
+  try {
+    const r = await api('/api/pending');
+    state.pending = r.pending || [];
+    renderPending(state.pending);
+  } catch (e) { }
+}
+function renderPending(list) {
+  const tb = $('pendingTable');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:36px;color:var(--success)">🎉 No pending fees!</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(x => `
+    <tr><td>${esc(x.admission_no)}</td><td><strong>${esc(x.student_name)}</strong></td>
+      <td>${esc(x.class_name)}-${esc(x.section)}</td><td>${money(x.total_fee)}</td>
+      <td>${money(x.paid)}</td><td><strong style="color:var(--danger)">${money(x.pending)}</strong></td>
+      <td>${money(x.late_fee)}</td>
+      <td>${x.overdue_days > 0 ? `<span class="badge badge-red">${x.overdue_days} days</span>` : '<span class="badge badge-yellow">Not due</span>'}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="quickPay('${esc(x.admission_no)}')">Pay</button></td></tr>`).join('');
+}
+function filterPending() {
+  const q = $('pendingSearch').value.toLowerCase();
+  const cls = $('pendingClassFilter').value.toLowerCase();
+  renderPending(state.pending.filter(x => {
+    const text = Object.values(x).join(' ').toLowerCase();
+    const cm = !cls || String(x.class_name || '').toLowerCase() === cls;
+    return text.includes(q) && cm;
+  }));
+}
+function quickPay(adm) { goPage('fee'); $('feeAdmission').value = adm; setTimeout(findFeeStudent, 150); }
+
+/* ═══════════ STRUCTURE ═══════════ */
+async function loadStructure() {
+  try {
+    const r = await api('/api/fee-structure');
+    state.structure = r.data || [];
+    renderStructure(state.structure);
+  } catch (e) { }
+}
+function renderStructure(items) {
+  const tb = $('structureTable');
+  if (!items.length) {
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--muted)">No fee structure.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = items.map(item => `
+    <tr><td><strong>${esc(item['Class'])}</strong></td>
+      <td>${money(item['Admission Fee'])}</td><td>${money(item['Tuition Fee'])}</td>
+      <td>${money(item['Transport Fee'])}</td><td>${money(item['Exam Fee'])}</td>
+      <td>${money(item['Annual Fee'])}</td><td>${money(item['Other Fee'])}</td>
+      <td>${can('structure', 'edit') ? `<button class="btn btn-primary btn-sm" onclick="editStructure('${esc(item['Class'])}')">Edit</button>` : '—'}</td></tr>`).join('');
+}
+
+/* ═══════ FIXED: editStructure (Bug fix applied) ═══════ */
+function editStructure(cls) {
+  const item = state.structure.find(x => String(x['Class']) === String(cls));
+  if (!item) { showToast('Class not found.', 'error'); return; }
+
+  const fields = [
+    ['fsAdmission', 'Admission Fee', 'Admission Fee'],
+    ['fsTuition', 'Tuition Fee (Monthly)', 'Tuition Fee'],
+    ['fsTransport', 'Transport Fee (Monthly)', 'Transport Fee'],
+    ['fsExam', 'Exam Fee', 'Exam Fee'],
+    ['fsAnnual', 'Annual Fee', 'Annual Fee'],
+    ['fsOther', 'Other Fee', 'Other Fee'],
+  ];
+
+  const modal = document.createElement('div');
+  modal.className = 'modal show';
+  modal.innerHTML = `<div class="modal-card">
+    <div class="modal-header"><h3>Edit Fee Structure — ${esc(cls)}</h3>
+      <button class="close-btn" onclick="this.closest('.modal').remove()">×</button></div>
+    <div class="modal-body">
+      <form id="fsForm">
+        <div class="form-grid">
+          ${fields.map(([id, label, key]) => `
+            <div class="form-group"><label>${label}</label>
+              <input type="number" class="form-control" id="${id}" value="${item[key] || 0}" min="0"></div>
+          `).join('')}
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn btn-secondary" type="button" onclick="this.closest('.modal').remove()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+
+  modal.querySelector('#fsForm').addEventListener('submit', async e => {
+    e.preventDefault();
+
+    // ✅ FIX: modal.querySelector use kar rahe hain, getElementById nahi
+    const getVal = (id) => {
+      const el = modal.querySelector('#' + id);
+      return el ? el.value : 0;
+    };
+
+    try {
+      const r = await api('/api/fee-structure', {
+        method: 'POST',
+        body: JSON.stringify({
+          class_name: cls,
+          admission_fee: getVal('fsAdmission'),
+          tuition_fee:   getVal('fsTuition'),
+          transport_fee: getVal('fsTransport'),
+          exam_fee:      getVal('fsExam'),
+          annual_fee:    getVal('fsAnnual'),
+          other_fee:     getVal('fsOther'),
+        })
+      });
+      showToast(r.message || 'Fee structure saved.');
+      modal.remove();
+      await loadStructure();
+      await loadDashboard();
+      await loadPending();
+    } catch (err) {
+      showToast(err.message || 'Save failed.', 'error');
+    }
+  });
+}
+
+/* ═══════════ STAFF ═══════════ */
+async function loadStaff() {
+  try {
+    const r = await api('/api/staff');
+    state.staff = r.staff || [];
+    renderStaff(state.staff);
+  } catch (e) { }
+}
+function renderStaff(list) {
+  const tb = $('staffTable');
+  if (!list.length) {
+    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:36px;color:var(--muted)">No staff found.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = list.map(s => {
+    const active = String(s['Status'] || '').toLowerCase() === 'active';
+    return `<tr><td><strong>${esc(s['Staff ID'])}</strong></td>
+      <td>${esc(s['Name'])}</td><td>${esc(s['Designation'])}</td>
+      <td>${esc(s['Department'])}</td><td>${esc(s['Mobile'])}</td>
+      <td>${money(s['Basic Salary'])}</td>
+      <td><span class="badge ${active ? 'badge-green' : 'badge-red'}">${active ? 'Active' : 'Inactive'}</span></td>
+      <td>${can('staff', 'edit') ? `<button class="btn btn-primary btn-sm" onclick="editStaff('${esc(s['Staff ID'])}')">Edit</button>` : '—'}</td></tr>`;
+  }).join('');
+}
+function filterStaff() {
+  const q = $('staffSearch').value.toLowerCase();
+  renderStaff(state.staff.filter(s => Object.values(s).join(' ').toLowerCase().includes(q)));
+}
+function editStaff(id) {
+  goPage('hiring');
+  const s = state.staff.find(x => String(x['Staff ID']) === String(id));
+  if (!s) return;
+  $('hireStaffId').value = s['Staff ID'] || '';
+  $('hireName').value = s['Name'] || '';
+  $('hireDesignation').value = s['Designation'] || '';
+  $('hireDepartment').value = s['Department'] || '';
+  $('hireMobile').value = s['Mobile'] || '';
+  $('hireJoining').value = s['Joining Date'] || '';
+  $('hireBasic').value = s['Basic Salary'] || 0;
+  $('hireAllow').value = s['Allowances'] || 0;
+  $('hiringForm').dataset.editMode = id;
+  showToast('Staff data loaded. Edit and save.');
+}
+
+/* ═══════════ HIRING ═══════════ */
+$('hiringForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const editMode = $('hiringForm').dataset.editMode;
+  const data = {
+    staff_id: $('hireStaffId').value.trim(),
+    name: $('hireName').value.trim(),
+    designation: $('hireDesignation').value,
+    department: $('hireDepartment').value,
+    mobile: $('hireMobile').value,
+    joining_date: $('hireJoining').value,
+    basic_salary: $('hireBasic').value,
+    allowances: $('hireAllow').value
+  };
+  try {
+    let r;
+    if (editMode) {
+      r = await api(`/api/staff/${encodeURIComponent(editMode)}`, { method: 'PUT', body: JSON.stringify(data) });
+    } else {
+      r = await api('/api/staff', { method: 'POST', body: JSON.stringify(data) });
+    }
+    showToast(r.message);
+    $('hiringForm').reset();
+    $('hiringForm').dataset.editMode = '';
+    $('hireJoining').value = todayStr();
+    await loadStaff(); await loadDashboard();
+  } catch (err) { showToast(err.message, 'error'); }
+});
+
+/* ═══════════ ATTENDANCE ═══════════ */
+async function loadAttendance() {
+  const day = $('attDate').value || todayStr();
+  try {
+    const r = await api(`/api/attendance?date=${encodeURIComponent(day)}`);
+    const list = r.attendance || [];
+    state.attRecords = list;
+
+    $('attStats').innerHTML = Object.entries(r.summary || {}).map(([k, v]) => `
+      <div class="stat-card"><div class="stat-label">${esc(k)}</div><div class="stat-value">${v}</div></div>`).join('')
+      || `<div class="stat-card"><div class="stat-label">Total Staff</div><div class="stat-value">${list.length}</div></div>`;
+
+    $('attendanceTable').innerHTML = list.map((a, idx) => `
+      <tr data-sid="${esc(a.staff_id)}" data-idx="${idx}">
+        <td><input type="checkbox" class="att-check" ${a.status === 'Present' || a.status === 'Half Day' || a.status === 'Paid Leave' ? 'checked' : ''} onchange="toggleAtt(${idx}, this.checked)"></td>
+        <td><strong>${esc(a.staff_id)}</strong></td><td>${esc(a.name)}</td>
+        <td>${esc(a.designation)}</td><td>${esc(a.department)}</td>
+        <td><input class="form-control att-remark" value="${esc(a.remarks)}" placeholder="Remarks" style="max-width:200px"></td></tr>`).join('')
+      || `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--muted)">No active staff.</td></tr>`;
+  } catch (e) { showToast(e.message, 'error'); }
+}
+function toggleAtt(idx, checked) {
+  if (state.attRecords[idx]) state.attRecords[idx].status = checked ? 'Present' : 'Absent';
+}
+function markAllAtt(present) {
+  document.querySelectorAll('.att-check').forEach((cb, i) => {
+    cb.checked = present;
+    if (state.attRecords[i]) state.attRecords[i].status = present ? 'Present' : 'Absent';
+  });
+}
+async function saveAttendance() {
+  const day = $('attDate').value || todayStr();
+  const records = [];
+  document.querySelectorAll('#attendanceTable tr[data-sid]').forEach(tr => {
+    records.push({
+      staff_id: tr.dataset.sid,
+      status: tr.querySelector('.att-check').checked ? 'Present' : 'Absent',
+      remarks: tr.querySelector('.att-remark').value
+    });
+  });
+  try {
+    const r = await api('/api/attendance', { method: 'POST', body: JSON.stringify({ date: day, records }) });
+    showToast(r.message);
+    loadAttendance(); loadDashboard();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+/* ═══════════ SALARY ═══════════ */
+async function loadSalary() {
+  const m = $('salMonth').value || monthStr();
+  try {
+    const r = await api(`/api/salary?month=${encodeURIComponent(m)}`);
+    state.salary = r.salary || [];
+    renderSalary(r.salary || [], r.total || 0);
+  } catch (e) { showToast(e.message, 'error'); }
+}
+function renderSalary(list, total) {
+  const tbody = $('salaryTable');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:36px;color:var(--muted)">No salary data.</td></tr>`;
+    $('salaryStats').innerHTML = '';
+    return;
+  }
+  $('salaryStats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Staff</div><div class="stat-value">${list.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Net Payable</div><div class="stat-value">${money(total)}</div></div>
+    <div class="stat-card"><div class="stat-label">Deductions</div><div class="stat-value" style="color:var(--danger)">${money(list.reduce((a, x) => a + Number(x['Deductions'] || x.deductions || 0), 0))}</div></div>`;
+
+  tbody.innerHTML = list.map(s => {
+    const g = (k1, k2) => s[k1] !== undefined ? s[k1] : (s[k2] || 0);
+    return `<tr><td><strong>${esc(g('staff_name', 'Staff Name'))}</strong><br><small style="color:var(--muted)">${esc(g('staff_id', 'Staff ID'))}</small></td>
+      <td>${g('working_days', 'Working Days')}</td><td>${g('present', 'Present')}</td>
+      <td>${g('absent', 'Absent')}</td><td>${g('half_day', 'Half Day')}</td>
+      <td>${g('lop', 'LOP')}</td><td>${money(g('basic_salary', 'Basic Salary'))}</td>
+      <td>${money(g('allowances', 'Allowances'))}</td>
+      <td style="color:var(--danger)">${money(g('deductions', 'Deductions'))}</td>
+      <td><strong>${money(g('net_salary', 'Net Salary'))}</strong></td></tr>`;
+  }).join('');
+}
+async function generateSalary() {
+  const m = $('salMonth').value || monthStr();
+  try {
+    const r = await api('/api/salary/generate', { method: 'POST', body: JSON.stringify({ month: m }) });
+    showToast(r.message);
+    renderSalary(r.salary || [], r.total || 0);
+  } catch (e) { showToast(e.message, 'error'); }
+}
+function exportSalary() {
+  const m = $('salMonth').value || monthStr();
+  window.location = `/api/reports/export?type=salary&month=${encodeURIComponent(m)}`;
+}
+
+/* ═══════════ REPORTS ═══════════ */
+async function generateReport() {
+  const p = new URLSearchParams({
+    type: $('repType').value, from: $('repFrom').value, to: $('repTo').value,
+    class: $('repClass').value, mode: $('repMode').value, month: $('repMonth').value
+  });
+  try {
+    const r = await api('/api/reports/data?' + p.toString());
+    const rows = r.rows || [];
+    state.reportRows = rows;
+    $('reportMeta').textContent = `${rows.length} records`;
+    const stats = [];
+    if (r.total !== undefined) stats.push(['Total Amount', money(r.total)]);
+    stats.push(['Records', rows.length]);
+    $('reportStats').innerHTML = stats.map(([l, v]) => `<div class="stat-card"><div class="stat-label">${esc(l)}</div><div class="stat-value">${esc(v)}</div></div>`).join('');
+    const table = $('reportTable');
+    if (!rows.length) {
+      table.querySelector('thead').innerHTML = '';
+      table.querySelector('tbody').innerHTML = `<tr><td style="text-align:center;padding:36px;color:var(--muted)">No records found.</td></tr>`;
+      return;
+    }
+    const headers = Object.keys(rows[0]);
+    table.querySelector('thead').innerHTML = `<tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr>`;
+    table.querySelector('tbody').innerHTML = rows.slice(0, 500).map(row => `
+      <tr>${headers.map(h => {
+        const v = row[h];
+        const isNum = typeof v === 'number';
+        return `<td>${isNum && Math.abs(v) > 100 ? money(v) : esc(v)}</td>`;
+      }).join('')}</tr>`).join('');
+  } catch (e) { showToast(e.message, 'error'); }
+}
+function exportReport() {
+  const p = new URLSearchParams({
+    type: $('repType').value, from: $('repFrom').value, to: $('repTo').value,
+    class: $('repClass').value, mode: $('repMode').value, month: $('repMonth').value
+  });
+  window.location = '/api/reports/export?' + p.toString();
+}
+function printReport() {
+  const table = $('reportTable').outerHTML;
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Report</title><style>
+    body{font-family:Arial;padding:20px}table{width:100%;border-collapse:collapse;font-size:11px}
+    th,td{border:1px solid #ccc;padding:6px}th{background:#eef4ff}
+  </style></head><body><h2>Blue Diamond Public School — Report</h2>
+    <p>Generated: ${new Date().toLocaleString()}</p>${table}</body></html>`);
+  w.document.close(); w.focus();
+  setTimeout(() => w.print(), 400);
+}
+
+/* ═══════════ USERS ═══════════ */
+$('userForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  try {
+    const r = await api('/api/users', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: $('newUsername').value.trim(),
+        password: $('newUserPassword').value,
+        role: $('newUserRole').value
+      })
+    });
+    showToast(r.message);
+    closeModal('userModal');
+    loadUsers();
+  } catch (err) { showToast(err.message, 'error'); }
+});
+async function loadUsers() {
+  try {
+    const r = await api('/api/users');
+    state.users = r.users || [];
+    renderUsers();
+  } catch (e) { }
+}
+function renderUsers() {
+  const tb = $('usersTable');
+  tb.innerHTML = state.users.map(u => {
+    const locked = u.locked === true || ['yes', 'true', '1'].includes(String(u.locked).toLowerCase());
+    const active = String(u.status).toLowerCase() === 'active';
+    const isSelf = String(u.username).toLowerCase() === String(state.user).toLowerCase();
+    return `<tr><td><strong>${esc(u.username)}</strong>${isSelf ? ' <span class="badge badge-blue">You</span>' : ''}</td>
+      <td><span class="badge badge-blue">${esc(u.role)}</span></td>
+      <td><span class="badge ${active ? 'badge-green' : 'badge-red'}">${esc(u.status)}</span></td>
+      <td>${u.failed_attempts || 0}</td>
+      <td><span class="badge ${locked ? 'badge-red' : 'badge-green'}">${locked ? 'LOCKED' : 'OK'}</span></td>
+      <td style="white-space:nowrap">${can('users', 'edit') ? `
+        ${locked ? `<button class="btn btn-success btn-sm" onclick="unlockUser('${esc(u.username)}')">Unlock</button>` : ''}
+        <button class="btn btn-warning btn-sm" onclick="resetPassword('${esc(u.username)}')">Reset</button>
+        <button class="btn btn-secondary btn-sm" onclick="editPermissions('${esc(u.username)}')">Perms</button>
+        ${!isSelf ? `<button class="btn btn-danger btn-sm" onclick="toggleStatus('${esc(u.username)}','${active ? 'Inactive' : 'Active'}')">${active ? 'Disable' : 'Enable'}</button>` : ''}` : '—'}
+      </td></tr>`;
+  }).join('');
+}
+async function unlockUser(u) {
+  try { const r = await api(`/api/users/${encodeURIComponent(u)}/unlock`, { method: 'POST' }); showToast(r.message); loadUsers(); }
+  catch (e) { showToast(e.message, 'error'); }
+}
+function resetPassword(u) {
+  const modal = document.createElement('div');
+  modal.className = 'modal show';
+  modal.innerHTML = `<div class="modal-card"><div class="modal-header"><h3>Reset Password — ${esc(u)}</h3>
+    <button class="close-btn" onclick="this.closest('.modal').remove()">×</button></div>
+    <div class="modal-body"><p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">This will also unlock the account.</p>
+    <form id="rpForm"><div class="form-group"><label>New Password</label>
+      <input type="password" class="form-control" id="rpNew" required minlength="4"></div>
+      <div class="actions"><button class="btn btn-primary" type="submit">Reset</button></div></form></div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#rpForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      const newPass = modal.querySelector('#rpNew').value;
+      const r = await api(`/api/users/${encodeURIComponent(u)}/reset-password`, {
+        method: 'POST', body: JSON.stringify({ new_password: newPass })
+      });
+      showToast(r.message); modal.remove(); loadUsers();
+    } catch (err) { showToast(err.message, 'error'); }
+  });
+}
+async function toggleStatus(u, status) {
+  try { const r = await api(`/api/users/${encodeURIComponent(u)}/status`, { method: 'POST', body: JSON.stringify({ status }) }); showToast(r.message); loadUsers(); }
+  catch (e) { showToast(e.message, 'error'); }
+}
+function editPermissions(username) {
+  const u = state.users.find(x => String(x.username) === String(username));
+  if (!u) return;
+  const sections = state.meta.permission_sections || [];
+  const labels = {
+    dashboard: 'Dashboard', students: 'Students', admission: 'Admission', fee: 'Fee',
+    receipts: 'Receipts', pending: 'Pending', structure: 'Structure', reports: 'Reports',
+    users: 'Users', audit: 'Audit', settings: 'Settings', backup: 'Backup',
+    staff: 'Staff', hiring: 'Hiring', attendance: 'Attendance', salary: 'Salary',
+    notifications: 'Alerts'
+  };
+  const rows = sections.map(sec => `
+    <tr><td><strong>${esc(labels[sec] || sec)}</strong></td>
+      <td><select data-sec="${esc(sec)}" class="perm-sel form-control">
+        ${['none', 'view', 'edit'].map(lv => `<option value="${lv}" ${String(u.permissions?.[sec] || 'none') === lv ? 'selected' : ''}>${lv === 'none' ? 'No Access' : (lv === 'view' ? 'View' : 'View + Edit')}</option>`).join('')}
+      </select></td></tr>`).join('');
+  const modal = document.createElement('div');
+  modal.className = 'modal show';
+  modal.innerHTML = `<div class="modal-card"><div class="modal-header"><h3>Permissions — ${esc(username)}</h3>
+    <button class="close-btn" onclick="this.closest('.modal').remove()">×</button></div>
+    <div class="modal-body"><table class="perm-table" style="width:100%"><thead><tr><th>Section</th><th>Access</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <div class="actions"><button class="btn btn-primary" id="savePerms">Save</button>
+        <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button></div></div></div>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#savePerms').addEventListener('click', async () => {
+    const perms = {};
+    modal.querySelectorAll('.perm-sel').forEach(sel => { perms[sel.dataset.sec] = sel.value; });
+    try {
+      const r = await api(`/api/users/${encodeURIComponent(username)}/permissions`, { method: 'POST', body: JSON.stringify({ permissions: perms }) });
+      showToast(r.message); modal.remove(); loadUsers();
+    } catch (e) { showToast(e.message, 'error'); }
+  });
+}
+
+/* ═══════════ AUDIT ═══════════ */
+async function loadAudit() {
+  try {
+    const r = await api('/api/audit');
+    state.audit = r.logs || [];
+    $('auditTable').innerHTML = state.audit.map(l => `
+      <tr><td>${esc(l['Date'])}</td><td>${esc(l['Time'])}</td>
+        <td><strong>${esc(l['Username'])}</strong></td>
+        <td><span class="badge badge-blue">${esc(l['Action'])}</span></td>
+        <td>${esc(l['Details'])}</td></tr>`).join('')
+      || `<tr><td colspan="5" style="text-align:center;padding:36px;color:var(--muted)">No logs.</td></tr>`;
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+/* ═══════════ NOTIFICATIONS ═══════════ */
+async function loadNotifications() {
+  try {
+    const r = await api('/api/notifications');
+    const alerts = r.alerts || [];
+    const badge = $('notifBadge');
+    if (alerts.length) { badge.textContent = alerts.length > 99 ? '99+' : alerts.length; badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
+    $('notifList').innerHTML = alerts.length
+      ? alerts.map(a => `<div style="padding:12px 14px;border-radius:11px;border-left:4px solid ${a.type === 'danger' ? 'var(--danger)' : (a.type === 'warning' ? 'var(--warning)' : 'var(--blue)')};background:var(--input-bg);margin-bottom:9px;font-size:12px">
+          <strong style="display:block;margin-bottom:3px">${esc(a.title)}</strong>
+          <p style="color:var(--muted);font-size:11.5px">${esc(a.message)}</p></div>`).join('')
+      : `<div style="text-align:center;padding:36px;color:var(--success)">✅ No alerts.</div>`;
+  } catch (e) { }
+}
+
+/* ═══════════ SETTINGS ═══════════ */
+async function loadSettings() {
+  try {
+    const r = await api('/api/settings');
+    const s = r.settings || {};
+    state.meta.settings = s;
+    $('sSchoolName').value = s['School Name'] || '';
+    $('sSchoolAddress').value = s['School Address'] || '';
+    $('sSession').value = s['Academic Session'] || '2026-27';
+    $('sStartMonth').value = s['Session Start Month'] || '4';
+    $('sCurrency').value = s['Currency'] || 'INR';
+    $('sPrefix').value = s['Receipt Prefix'] || 'BDPS';
+    $('sDueDay').value = s['Due Day'] || '10';
+    $('sGrace').value = s['Grace Days'] || '0';
+    $('sLateEnabled').value = s['Late Fee Enabled'] || 'Yes';
+    $('sLateType').value = s['Late Fee Type'] || 'Per Day';
+    $('sLateAmount').value = s['Late Fee Amount'] || '50';
+    $('sLatePercent').value = s['Late Fee Percent'] || '2';
+    $('sMaxLate').value = s['Max Late Fee'] || '1000';
+    $('sMaxAttempts').value = s['Max Login Attempts'] || '3';
+    $('sAllowBackdate').value = s['Allow Backdate Attendance'] || 'No';
+    $('sWorkingDays').value = s['Working Days Per Month'] || '26';
+    $('sHalfDay').value = s['Half Day Count'] || '0.5';
+    $('sLop').value = s['Salary LOP Deduction'] || 'Yes';
+  } catch (e) { }
+}
+$('settingsForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  await saveSettings({
+    'School Name': $('sSchoolName').value, 'School Address': $('sSchoolAddress').value,
+    'Academic Session': $('sSession').value, 'Session Start Month': $('sStartMonth').value,
+    'Currency': $('sCurrency').value, 'Receipt Prefix': $('sPrefix').value,
+    'Due Day': $('sDueDay').value, 'Grace Days': $('sGrace').value,
+    'Late Fee Enabled': $('sLateEnabled').value, 'Late Fee Type': $('sLateType').value,
+    'Late Fee Amount': $('sLateAmount').value, 'Late Fee Percent': $('sLatePercent').value,
+    'Max Late Fee': $('sMaxLate').value, 'Max Login Attempts': $('sMaxAttempts').value,
+    'Allow Backdate Attendance': $('sAllowBackdate').value,
+    'Working Days Per Month': $('sWorkingDays').value, 'Half Day Count': $('sHalfDay').value,
+    'Salary LOP Deduction': $('sLop').value
+  });
+});
+async function saveSettings(data) {
+  try {
+    const r = await api('/api/settings', { method: 'POST', body: JSON.stringify(data) });
+    showToast(r.message);
+    await loadDashboard(); await loadPending();
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+$('securityForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const qa = [];
+  document.querySelectorAll('.sec-q').forEach((sel, i) => {
+    const ans = document.querySelectorAll('.sec-a')[i];
+    qa.push({ q: sel.value, a: ans.value });
+  });
+  if (qa.some(x => !x.q || !x.a)) { showToast('Fill all questions and answers.', 'error'); return; }
+  try {
+    const r = await api('/api/setup-security-questions', { method: 'POST', body: JSON.stringify({ qa }) });
+    showToast(r.message);
+  } catch (err) { showToast(err.message, 'error'); }
+});
+
+$('passwordForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const np = $('newPassword').value, cp = $('confirmPassword').value;
+  if (np !== cp) { showToast('Passwords do not match.', 'error'); return; }
+  try {
+    const r = await api('/api/change-password', { method: 'POST', body: JSON.stringify({ old_password: $('oldPassword').value, new_password: np }) });
+    showToast(r.message);
+    e.target.reset();
+  } catch (err) { showToast(err.message, 'error'); }
+});
+
+/* ═══════════ FORGOT PASSWORD ═══════════ */
+function showForgotPassword() {
+  $('forgotBody').innerHTML = `
+    <div class="form-group"><label>Username</label>
+      <input class="form-control" id="fpUsername" placeholder="Enter your username"></div>
+    <div class="actions"><button class="btn btn-primary" onclick="forgotInit()">Next → Security Questions</button></div>`;
+  openModal('forgotModal');
+}
+async function forgotInit() {
+  const username = $('fpUsername').value.trim();
+  if (!username) { showToast('Enter username.', 'error'); return; }
+  try {
+    const r = await api('/api/forgot-password/init', { method: 'POST', body: JSON.stringify({ username }) });
+    window._fpUsername = username;
+    window._fpQuestions = r.questions;
+    $('forgotBody').innerHTML = `
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Answer all questions correctly to reset your password.</p>
+      ${r.questions.map(q => `
+        <div class="form-group"><label>${esc(q.question)}</label>
+          <input class="form-control fp-ans" data-idx="${q.index}" placeholder="Your answer"></div>`).join('')}
+      <div class="form-group"><label>New Password</label>
+        <input class="form-control" type="password" id="fpNewPass" placeholder="Min 6 characters"></div>
+      <div class="actions"><button class="btn btn-primary" onclick="forgotReset()">Reset Password</button>
+        <button class="btn btn-secondary" onclick="closeModal('forgotModal')">Cancel</button></div>`;
+  } catch (e) { showToast(e.message, 'error'); }
+}
+async function forgotReset() {
+  const answers = {};
+  document.querySelectorAll('.fp-ans').forEach(inp => { answers[inp.dataset.idx] = inp.value; });
+  const new_password = $('fpNewPass').value;
+  if (!new_password || new_password.length < 6) { showToast('Password must be 6+ characters.', 'error'); return; }
+  try {
+    const r = await api('/api/forgot-password/reset', {
+      method: 'POST',
+      body: JSON.stringify({ username: window._fpUsername, answers, new_password })
+    });
+    showToast(r.message);
+    closeModal('forgotModal');
+  } catch (e) { showToast(e.message, 'error'); }
+}
+
+/* ═══════════ BACKUP ═══════════ */
+async function createBackup() {
+  try { const r = await api('/api/backup', { method: 'POST' }); showToast(r.message); loadBackups(); }
+  catch (e) { showToast(e.message, 'error'); }
+}
+function downloadExcel() { window.location = '/api/download-excel'; }
+async function syncNow() {
+  try { const r = await api('/api/sync', { method: 'POST' }); showToast(r.message || 'Synced.'); }
+  catch (e) { showToast(e.message, 'error'); }
+}
+async function loadBackups() {
+  try {
+    const r = await api('/api/backups');
+    $('backupTable').innerHTML = (r.backups || []).map(b => `
+      <tr><td><strong>${esc(b.name)}</strong></td><td>${b.size}</td><td>${esc(b.created)}</td></tr>`).join('')
+      || `<tr><td colspan="3" style="text-align:center;padding:30px;color:var(--muted)">No backups.</td></tr>`;
+  } catch (e) { }
+}
+
+/* ═══════════ START ═══════════ */
+checkSession();
+setInterval(() => { if (state.user) loadNotifications(); }, 120000);
+</script>
+</body>
+</html>
