@@ -1,9 +1,10 @@
 Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 SQLAlchemy==2.0.36
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.11
 openpyxl==3.1.2
 Werkzeug==3.0.1
 reportlab==4.0.8
-qrcode[pil]==7.4.2
+qrcode==7.4.2
 python-dotenv==1.0.0
+gunicorn
